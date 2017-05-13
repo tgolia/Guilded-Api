@@ -1,14 +1,9 @@
-using Guilded.Common;
 using Guilded.Services.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Text;
 
 namespace Guilded
 {
@@ -33,35 +28,18 @@ namespace Guilded
 
         public IConfigurationRoot Configuration { get; }
 
-        private const string CORS_POLICY_NAME = "Selama-AngularApp";
-        private const string SECRET_KEY = "SampleNotSoSecretKey";
-        private static readonly SymmetricSecurityKey _signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(SECRET_KEY));
-
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
             services.AddOptions();
-            services.AddGuilded(Configuration, _signingKey);
-            services.AddMvc(config =>
+            services.AddGuilded(Configuration);
+            services.AddMvc().AddRazorOptions(razorOpts =>
             {
-                config.Filters.Add(new AuthorizeFilter("Selama Ashalanore"));
+                razorOpts.ViewLocationExpanders.Add(new PartialsFolderViewLocationExpander());
             });
-            services.AddAuthorization(opts =>
-            {
-                opts.AddPolicy("Selama Ashalanore", policy => policy.RequireClaim(Globals.JWT_CLAIM_TYPE, Globals.JWT_CLAIM_VALUE));
-            });
+
             services.AddRouting(options => options.LowercaseUrls = true);
-            services.AddCors(opts =>
-            {
-                opts.AddPolicy(
-                    CORS_POLICY_NAME,
-                    // TODO: Use config for "with origins"
-                    builder => builder.WithOrigins("http://localhost:8000")
-                        .AllowAnyMethod()
-                        .AllowAnyHeader()
-                );
-            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -74,49 +52,27 @@ namespace Guilded
             {
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
+                app.UseBrowserLink();
             }
             else
             {
                 app.UseExceptionHandler("/Home/Error");
             }
 
-            app.UseCors(CORS_POLICY_NAME);
+            app.UseStaticFiles();
             app.UseIdentity();
-            app.UseJwtBearerAuthentication(new JwtBearerOptions
-            {
-                AutomaticAuthenticate = true,
-                AutomaticChallenge = true,
-                TokenValidationParameters = CreateTokenValidationParameters(),
-            });
 
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
+                    name: "defaultArea",
+                    template: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
+                );
+                routes.MapRoute(
                     name: "default",
-                    template: "api/{controller=Home}/{action=Index}/{id?}"
+                    template: "{controller=Home}/{action=Index}/{id?}"
                 );
             });
-        }
-
-        private TokenValidationParameters CreateTokenValidationParameters()
-        {
-            var jwtOptions = Configuration.GetSection("JwtOptions");
-            return new TokenValidationParameters
-            {
-                ValidateIssuer = true,
-                ValidIssuer = jwtOptions["Issuer"],
-
-                ValidateAudience = true,
-                ValidAudience = (Globals.OSX ? jwtOptions["Audience:OSX"] : jwtOptions["Audience:Windows"]),
-
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = _signingKey,
-
-                RequireExpirationTime = true,
-                ValidateLifetime = true,
-
-                ClockSkew = TimeSpan.Zero,
-            };
         }
     }
 }

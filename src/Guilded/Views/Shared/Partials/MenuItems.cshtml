@@ -1,0 +1,33 @@
+﻿<a class="item" asp-area="" asp-controller="Home" asp-action="Index" guilded-route-active="@Url.Action("Index", "Home", new { area = "" })">
+    <i class="fa fa-home"></i> Home
+</a>
+<a class="item">
+    <i class="fa fa-comment"></i> Forums
+</a>
+@if (User.Identity.IsAuthenticated)
+{
+    <a class="item" asp-area="Admin" asp-controller="Home" asp-action="Index" guilded-route-active="@Url.Action("Index", "Home", new { area = "Admin" })">
+        <i class="fa fa-cogs"></i> Admin
+    </a>
+    <form class="ui left pointing dropdown link item" method="post" id="sign-out-form" asp-area="Account" asp-controller="Home" asp-action="SignOut">
+        <i class="dropdown icon"></i>
+        @User.Identity.Name
+        <div class="menu">
+            <a class="item" asp-area="Account" asp-controller="Manage" asp-action="Index" guilded-route-active="@Url.Action("Index", "Manage", new { area = "Account" })">
+                <i class="fa fa-user"></i> Manage Account
+            </a>
+            <a class="item" href="javascript:document.getElementById('sign-out-form').submit()">
+                <i class="fa fa-sign-out"></i> Sign out
+            </a>
+        </div>
+    </form>
+}
+else
+{
+    <a class="item" asp-area="Account" asp-controller="Home" asp-action="SignIn" guilded-route-active="@Url.Action("SignIn", "Home", new { area = "Account" })">
+        <i class="fa fa-sign-in"></i> Sign in
+    </a>
+    <a class="item" asp-area="Account" asp-controller="Home" asp-action="Register" guilded-route-active="@Url.Action("Register", "Home", new { area = "Account" })">
+        <i class="fa fa-pencil-square-o"></i> Register
+    </a>
+}

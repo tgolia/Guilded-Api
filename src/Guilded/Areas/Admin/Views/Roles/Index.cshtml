@@ -1,0 +1,39 @@
+﻿@model PaginatedRolesViewModel
+@{
+    ViewData["Title"] = "Roles";
+}
+
+<h3>
+    Roles
+</h3>
+
+<guilded-pager pager-page="@Model.CurrentPage" pager-last-page="@Model.LastPage" pager-url="/admin/roles"
+               pager-vertical-location="Top" />
+<div class="ui extra large styled fluid accordion">
+    @foreach (var role in Model.Roles)
+    {
+        <div class="title">
+            <i class="dropdown icon"></i>
+            @role.Name
+        </div>
+        <div class="content">
+            <p class="transition hidden">
+                <div class="ui relaxed list">
+                    @foreach (var permission in role.Permissions)
+                    {
+                        <div class="item">
+                            <div class="header">
+                                @permission.PermissionType
+                            </div>
+                            <div class="description">
+                                @permission.Description
+                            </div>
+                        </div>
+                    }
+                </div>
+            </p>
+        </div>
+    }
+</div>
+<guilded-pager pager-page="@Model.CurrentPage" pager-last-page="@Model.LastPage" pager-url="/admin/roles"
+               pager-vertical-location="Bottom" />

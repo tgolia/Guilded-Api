@@ -1,21 +1,14 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Guilded.Controllers;
+using Guilded.Extensions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Routing;
 using Moq;
 using Newtonsoft.Json.Linq;
-using Guilded.Controllers;
-using Guilded.Tests.Common.Mocking;
-using Guilded.Extensions;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Security.Claims;
-using System.Security.Principal;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace Guilded.Tests.Controllers

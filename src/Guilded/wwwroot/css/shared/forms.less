@@ -1,0 +1,35 @@
+﻿@import "mixins.less";
+
+.form
+{
+    .field
+    {
+        .ui.pointing.label
+        {
+            &.raised
+            {
+                box-shadow: 0px 2px 4px 0px rgba(34, 36, 38, 0.12), 0px 2px 10px 0px rgba(34, 36, 38, 0.15);
+            }
+
+            &.warning
+            {
+                border-width: 1px;
+                border-style: solid;
+
+                .warning();
+
+                &::before
+                {
+                    top: -1px;
+                }
+            }
+
+            .validation-field();
+        }
+    }
+
+    .segment
+    {
+        .validation-summary();
+    }
+}

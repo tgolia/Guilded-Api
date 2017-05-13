@@ -1,0 +1,101 @@
+﻿@import "mixins.less";
+
+@small-monitor-breakpoint: 768px;
+@mobile-breakpoint: (@small-monitor-breakpoint - 1);
+@main-menu-width: 200px;
+
+html, body
+{
+    height: 100%;
+}
+
+.main.menu
+{
+    min-width: @main-menu-width;
+    max-width: @main-menu-width;
+    min-height: 100%;
+
+    .item
+    {
+        .fa
+        {
+            margin-right: 10px;
+        }
+
+        &.brand
+        {
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        &.dropdown
+        {
+            .menu .item a
+            {
+                color: rgba(0, 0, 0, 0.87)!important;
+            }
+        }
+    }
+}
+
+.sidebar.main.menu
+{
+    z-index: 5;
+
+    &.visible
+    {
+        overflow: visible !important;
+    }
+}
+
+.pusher-content-wrapper
+{
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    overflow-y: auto;
+
+    .full.height
+    {
+        display: flex;
+        min-height: 100%;
+
+        .menu
+        {
+            &.main
+            {
+                position: relative;
+                border-radius: 0;
+                margin-top: 0;
+                margin-bottom: 0;
+
+                @media(max-width: @mobile-breakpoint)
+                {
+                    display: none;
+                }
+            }
+
+            &.fixed.top.mobile
+            {
+                @media(min-width: @small-monitor-breakpoint)
+                {
+                    display: none;
+                }
+            }
+        }
+
+        .main-content
+        {
+            flex: 1 1 auto;
+            margin: 0 18px;
+            padding: 15px 10px;
+
+            @media(max-width: @mobile-breakpoint)
+            {
+                margin: 0 10px;
+                padding-top: 72px;
+            }
+        }
+    }
+}

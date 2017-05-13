@@ -1,0 +1,50 @@
+﻿@import "colors.less";
+
+.warning()
+{
+    color: @warning-color;
+    border-color: @warning-border-color;
+    background-color: @warning-background-color;
+}
+
+.succcess()
+{
+    color: @success-color;
+    border-color: @success-border-color;
+    background-color: @success-background-color;
+}
+
+.validation-summary()
+{
+    &.validation-summary-valid
+    {
+        display: none;
+    }
+
+    &.validation-summary-errors
+    {
+        .warning();
+    }
+}
+
+.validation-field()
+{
+    &.field-validation-valid
+    {
+        display: none;
+    }
+
+    &.field-validation-errors
+    {
+        .warning();
+    }
+}
+
+.transform(@transformValue)
+{
+    -webkit-transform: @transformValue;
+    -moz-transform: @transformValue;
+    -ms-transform: @transformValue;
+    -o-transform: @transformValue;
+    transform: @transformValue;
+}

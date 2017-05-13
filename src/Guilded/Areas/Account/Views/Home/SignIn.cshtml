@@ -1,0 +1,48 @@
+﻿@model SignInUserViewModel
+
+@section scripts {
+    @{ await Html.ValidationScripts(); }
+}
+
+<div class="ui stackable divided two column grid">
+    <div class="column">
+        <h4>
+            Sign in using a local account
+        </h4>
+        <form class="ui form error" method="post" asp-area="Account" asp-controller="Home" asp-action="SignIn">
+            <div class="ui raised segment" asp-validation-summary="All"></div>
+            <div class="field">
+                <label asp-for="Email"></label>
+                <div class="ui input left icon">
+                    <input asp-for="Email"/>
+                    <i class="icon envelope"></i>
+                </div>
+                <span class="ui pointing warning raised label" asp-validation-for="Email"></span>
+            </div>
+            <div class="field">
+                <label asp-for="Password"></label>
+                <div class="ui input left icon">
+                    <input asp-for="Password"/>
+                    <i class="icon asterisk"></i>
+                </div>
+                <a asp-area="Account" asp-controller="Home" asp-action="ForgotPassword">
+                    Forgot your password?
+                </a>
+                <span class="ui pointing warning raised label" asp-validation-for="Password"></span>
+            </div>
+            <div class="field">
+                <div class="ui checkbox">
+                    <input asp-for="RememberMe"/><label asp-for="RememberMe"></label>
+                </div>
+            </div>
+            <button type="submit" class="ui button primary">
+                Sign in
+            </button>
+        </form>
+    </div>
+    <div class="column">
+        <h4>
+            Sign in using another service
+        </h4>
+    </div>
+</div>

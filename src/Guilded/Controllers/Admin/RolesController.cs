@@ -1,20 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+using Guilded.Areas.Admin.ViewModels.Roles;
 using Guilded.Data.DAL.Core;
-using Guilded.Data.ViewModels.Core;
-
-using DataModel = Guilded.Identity.ApplicationRole;
-using ViewModel = Guilded.Data.ViewModels.Core.ApplicationRole;
 using Guilded.Extensions;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
+using DataModel = Guilded.Identity.ApplicationRole;
 
 namespace Guilded.Controllers.Admin
 {
-    // TODO: Remove AllowAnonymous
-    [AllowAnonymous]
     public class RolesController : AdminControllerBase
     {
         #region Properties
@@ -30,35 +22,61 @@ namespace Guilded.Controllers.Admin
 
         #region Methods
         #region Action Methods
-        [HttpGet]
-        public JsonResult Get()
-        {
-            // TODO: Perform GET based on current user role
-            return Json(_db.RoleManager.Roles.ToListOfDifferentType(r => new ViewModel(r)));
-        }
+        //[HttpGet]
+        //public JsonResult Get()
+        //{
+        //    return Json(Mapper.Map<IQueryable<DataModel>, List<ViewModel>>(_db.GetRoles()));
+        //}
 
         [HttpGet("{id}")]
         public Task<JsonResult> Get(string id)
         {
-            DataModel role = _db.RoleManager.Roles.FirstOrDefault(r => r.Id == id);
-            if (role == null)
-            {
-                return Task.FromResult(Json(null));
-            }
-
-            return Task.FromResult(Json(new ViewModel(role)));
+            DataModel role = _db.GetRoleById(id);
+            return Task.FromResult(Json(new ApplicationRoleViewModel(role)));
         }
 
         [HttpPost]
-        public JsonResult CreateOrUpdate(ViewModel role)
+        public async Task<JsonResult> CreateOrUpdate([FromBody] ApplicationRoleViewModel roleViewModel)
         {
-            throw new NotImplementedException();
+            if (!ModelState.IsValid)
+            {
+                return BadRequestJson(ModelErrorsAsJson());
+            }
+
+            DataModel dbRole = _db.GetRoleById(roleViewModel.Id);
+            if (dbRole == null)
+            {
+                dbRole = await _db.CreateRoleAsync(roleViewModel.Name, roleViewModel.Permissions);
+            }
+            else if (dbRole.ConcurrencyStamp == roleViewModel.ConcurrencyStamp)
+            {
+                dbRole.UpdateFromViewModel(roleViewModel);
+                dbRole = await _db.UpdateRoleAsync(dbRole);
+            }
+            else
+            {
+                return BadRequestJson(new ApplicationRoleViewModel(dbRole));
+            }
+
+            return Json(new ApplicationRoleViewModel(dbRole));
         }
 
         [HttpDelete("{id}")]
-        public ActionResult Delete(string id)
+        public async Task<IActionResult> Delete(string id)
         {
-            throw new NotImplementedException();
+            var dbRole = _db.GetRoleById(id);
+            if (dbRole == null)
+            {
+                return NotFound();
+            }
+
+            var deleteResult = await _db.DeleteRole(dbRole);
+            if (!deleteResult.Succeeded)
+            {
+                return BadRequest();
+            }
+
+            return Ok();
         }
         #endregion
         #endregion
